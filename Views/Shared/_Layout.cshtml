@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+@using Bodega.Helpers;
+@{
+    //obtener el nombre del server
+    string Domain = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+}
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    @*@Styles.Render("~/bundles/css")*@
+    <link rel="stylesheet" href="~/Content/themes/Sistemas/css/bootstrap.css" /> 
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" rel="stylesheet"> 
+    <!-- Bootstrap validator-->
+    <link rel="stylesheet" href="~/Content/themes/Sistemas/js/validatorForm/css/bootstrapValidator.min.css" />
+    <link rel="stylesheet" href="~/Content/themes/Sistemas/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/Content/themes/Sistemas/css/landing.css" /> 
+    <link rel="stylesheet" href="~/Content/themes/Sistemas/css/plugin.css" /> 
+    
+    @*<link rel="stylesheet" href="~/Content/themes/bsadmin/css/sb-admin-2.css" />*@
+    <link rel="stylesheet" href="~/Content/themes/Sistemas/css/style.css" /> 
+    <!--[if lt IE 9]>
+        <script src="~/Content/themes/Sistemas/js/ie/respond.min.js"></script>
+        <script src="~/Content/themes/Sistemas/js/ie/html5.js"></script>
+        <script src="~/Content/themes/Sistemas/js/ie/excanvas.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+    <!-- header -->
+    <header id="header" class="navbar">
+        <ul class="nav navbar-nav hidden-xs  pull-right">
+            <li class="dropdown shift" data-toggle="shift:appendTo" data-target=".nav-primary .nav">
+                <a href="@Domain/Bodega/Login/LogOut" class="dropdown-toggle" data-toggle="">
+                    Cerrar sesión <i class="fa fa-times-circle-o fa-lg"></i>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-avatar pull-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="hidden-xs-only">
+                        @NombreHelper.get(User.Identity.Name)                       
+                    </span>
+                    <span class="thumb-small avatar inline"><img src="@Url.Content("http://intranet08.minvu.cl/imagenes/fotos_fun/" + RutClearHelper.RutClear(User.Identity.Name) + ".jpg") " alt=" " class=" img-circle"></span>
+                    <b class="caret hidden-xs-only"></b>
+                </a>
+                @*<ul class="dropdown-menu pull-right"> 
+                    <li><a href="#">Mi perfil</a></li>
+                    <li><a href="#"><span class="badge bg-danger pull-right">3</span>Notificaciones</a></li>
+                    <li class="divider"></li>
+                    <li>@Html.ActionLink("Cerrar Sesion", "LogOut", "Login")</li>
+                </ul>*@
+            </li>
+           
+        </ul>
+
+        <a class="navbar-brand" href="#"></a>
+        <button type="button" class="btn btn-link pull-left nav-toggle visible-xs" data-toggle="class:slide-nav slide-nav-left" data-target="body">
+            <i class="fa fa-bars fa-lg text-default"></i>
+        </button>
+
+        <ul class="nav navbar-nav hidden-xs">
+            <li class="dropdown shift" data-toggle="shift:appendTo" data-target=".nav-primary .nav">
+
+                <a href="@Domain/Bodega/Dashboard/Index" class="dropdown-toggle" data-toggle="">
+                    <i class="fa fa-home fa-lg"></i> PANEL DE CONTROL
+                </a>
+            </li>
+
+            <li class="dropdown shift" data-toggle="shift:appendTo" data-target=".nav-primary .nav">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-edit fa-lg"></i> SOLICITUDES <b class="caret hidden-sm-only"></b></a>
+                <ul class="dropdown-menu">
+                    <!-- si es secretaria o administrador de BD puede solicitar -->
+                    @if (User.IsInRole("Secretarias") || User.IsInRole("Administradores BD"))
+                    {
+                        <li>@Html.ActionLink("Nueva solicitud", "Create", "Solicitud")</li>
+                    } 
+
+                    @if (User.IsInRole("Secretarias") || User.IsInRole("Administradores BD") || User.IsInRole("Administrador de Sistema"))
+                    { 
+                        <li>@Html.ActionLink("Mis solicitudes", "Index", "Solicitud")</li>
+                    }
+                    @if (User.IsInRole("Administradores BD") || User.IsInRole("Administrador de Sistema"))
+                    {
+                        <li>@Html.ActionLink("Salidas de Material", "Salidas", "Solicitud")</li>
+                    }
+                </ul>
+            </li>
+            @if (!User.IsInRole("Secretarias"))
+            {
+            <li class="dropdown shift" data-toggle="shift:appendTo" data-target=".nav-primary .nav">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-list fa-lg"></i> INGRESOS <b class="caret hidden-sm-only"></b></a>
+                <ul class="dropdown-menu"> 
+                    <li>@Html.ActionLink("Nueva compra", "Create", "Factura")</li>
+                    <li>@Html.ActionLink("Otros ingresos", "Traslado", "Factura")</li>
+                    <li>@Html.ActionLink("Listado Compras", "Index", "Factura")</li>
+                    <li>@Html.ActionLink("Listado Otros", "Traslados", "Factura")</li>
+                    <li class="divider"></li>
+                    <li>@Html.ActionLink("Cuentas", "Index", "LineaInversion")</li>
+                </ul>
+            </li>
+             
+            <li class="dropdown shift" data-toggle="shift:appendTo" data-target=".nav-primary .nav">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-th fa-lg"></i> CATALOGO <b class="caret hidden-sm-only"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        @Html.ActionLink("Nuevo producto", "Create", "Producto")
+                    </li>
+                    <li>
+                        @Html.ActionLink("Listado Productos", "Index", "Producto")
+                    </li> 
+                    <li class="divider"></li>
+                    <li>
+                        @Html.ActionLink("Ver catalogo", "Rubros", "Catalogo")
+                    </li>
+                   
+                </ul>
+            </li>
+            <li class="dropdown shift" data-toggle="shift:appendTo" data-target=".nav-primary .nav">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file fa-lg"></i> INFORMES <b class="caret hidden-sm-only"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        @Html.ActionLink("Productos Con Stock", "Stock", "Producto")
+                    </li>
+                    <li>
+                        @Html.ActionLink("Productos Sin Stock","SinStock","Producto")
+                    </li>
+                    <li>
+                        @Html.ActionLink("Consumo de productos", "Consumo", "Producto")
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        @Html.ActionLink("Probabilidad de compra", "ProbabilidadCompra", "Producto")
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        @Html.ActionLink("Productos ingresados por fechas", "getProductosPorFechas", "Producto")
+                    </li>
+
+                </ul>
+            </li>
+            <li class="dropdown shift" data-toggle="shift:appendTo" data-target=".nav-primary .nav">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-users fa-lg"></i> USUARIOS <b class="caret hidden-sm-only"></b></a>
+                <ul class="dropdown-menu">
+ 
+                    <li>
+                        @Html.ActionLink("Administrar", "Listado", "Usuarios")
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        @Html.ActionLink("Todos los usuarios", "Todos", "Usuarios")
+                    </li> 
+                </ul>
+            </li>
+            }
+        </ul>
+    </header>
+    <!-- / header --> 
+     
+    <section id="content">
+        <section class="main padder">
+            @RenderBody()
+        </section>
+    </section>
+    <!-- .modal --> 
+    <!-- / .modal -->
+    <!-- footer -->
+    <div class="row col-lg-12">
+        <footer id="footer">
+            <div class="text-center padder clearfix">
+                <p>
+                    <small>&copy; Servicio de vivienda y urbanización VIII 2015 </small><br><br>
+                    <img src="~/Content/themes/Sistemas/images/serviu_logo.png" /><br><br>
+                </p>
+            </div>
+        </footer>
+        <a href="#" class="hide slide-nav-block" data-toggle="class:slide-nav slide-nav-left" data-target="body"></a>
+    </div>
+    <!-- / footer -->
+
+    @*@Scripts.Render("~/bundles/js/jquery")*@
+    <script src="~/Content/Themes/Sistemas/js/jquery.min.js"></script>
+    <script src="~/Content/Themes/Sistemas/js/jquery-ui-1.10.3.custom.min.js"></script>  
+    @*<script src="~/Content/Themes/Sistemas/js/jquery.unobtrusive-ajax.js"></script> 
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+    
+    @*@Scripts.Render("~/bundles/js/bootstrap")  
+    @Scripts.Render("~/bundles/js/app")*@
+
+    <script src="~/Content/Themes/Sistemas/js/bootstrap.js"></script>
+    <!-- bootstrap validator -->
+    <script type="text/javascript" src="~/Content/Themes/Sistemas/js/validatorForm/js/bootstrapValidator.min.js"></script>
+
+    @*<script src="~/Content/Themes/Sistemas/js/app.data.js"></script>
+    <script src="~/Content/Themes/Sistemas/js/app.js"></script>
+    <script src="~/Content/Themes/Sistemas/js/app.plugin.js"></script>*@
+    <!-- Sparkline Chart -->
+    @*<script src="~/Content/Themes/Sistemas/js/charts/sparkline/jquery.sparkline.min.js"></script>*@
+    <!-- Easy Pie Chart -->
+    @*<script src="~/Content/Themes/Sistemas/js/charts/easypiechart/jquery.easy-pie-chart.js"></script>*@
+
+    <script>
+	@if (TempData["SuccessMessage"] != null)
+	{
+		@TempData["SuccessMessage"]
+	}
+	@if (TempData["ErrorMessage"] != null)
+	{
+		@TempData["ErrorMessage"]
+	}
+    </script>
+     
+    <!-- Agrega los scripts propios de cada pagina -->
+    @RenderSection("scripts")
+
+</body>
+</html>

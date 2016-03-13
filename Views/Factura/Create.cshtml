@@ -1,0 +1,1315 @@
+﻿@model Bodega.Models.Context.FACTURA
+
+@{
+    ViewBag.Title = "Nuevo ingreso";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<p></p>
+<div class="row">
+    <div class="col-lg-12">
+        <!-- .breadcrumb -->
+        <ul class="breadcrumb">
+            <li><a href="/Bodega/Dashboard/Index"><i class="fa fa-home"></i>Panel de control</a></li>
+            <li><a href="#">Ingresos</a></li> 
+            <li class="active">Nuevo Ingreso</li>
+        </ul>
+        <!-- / .breadcrumb -->
+    </div>
+</div>
+
+<div class="clearfix">
+    <h4><i class="fa fa-th-list"></i> NUEVO INGRESO DE MATERIALES</h4>
+</div>
+
+<p></p>
+@if (@TempData["ErrorMessage"] != null) { 
+<div class="alert alert-danger">
+    <button type="button" class="close" data-dismiss="alert"><i class="fa fa-times"></i></button>
+    <i class="fa fa-ban-circle fa-lg"></i>@TempData["ErrorMessage"]
+</div>
+}
+
+@using (Html.BeginForm("Create", "Factura", FormMethod.Post, new { enctype = "multipart/form-data", @class = "registrarIngreso", onsubmit = "", id="formulario" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @*@Html.ValidationMessageFor(model => model.CODIGO_OC)*@
+
+    <div class="row">
+        <div class="col-lg-4">
+            <section>
+                <div class="panel">
+                    <div class="panel-heading">Año de Ejercicio</div>
+                    <div class="panel-body">
+                        <div class="col-lg-12">
+                           
+                            <div class="editor-field">
+                                <select id="anio" class="form-control">
+                                    <option value="2015">2015</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="col-sm-8">
+            <section>
+                <div class="panel">
+                    <div class="panel-heading">Linea de Inversión</div>
+                    <div class="panel-body">
+                        <div class="col-lg-12">
+                            @*<div class="editor-label"><label>Origen</label></div>*@
+                            <div class="editor-field">
+                                @Html.DropDownList("ID_LINEA_INVERSION", (IEnumerable<SelectListItem>)ViewBag.lineasIversion)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div> 
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <section class="panel">
+                <header class="panel-heading">
+                    Datos orden de compra
+                </header>
+                <div class="panel-body">
+                    @Html.HiddenFor(model => model.ID_FACTURA)
+                    <div class="col-lg-12">
+                        <div class="editor-label">
+                            <label for="CODIGO_OC">N° orden de compra</label>
+                        </div>
+                        <div class="editor-field">
+                            @*<input class="form-control" id="CODIGO_OC" name="CODIGO_OC" type="text" value="">*@
+                            @Html.TextBoxFor(model => model.CODIGO_OC, new { @class = "form-control" })
+                            <span class="field-validation-valid" data-valmsg-for="CODIGO_OC" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="editor-label">
+                            @Html.LabelFor(model => model.FECHA_OC)
+                        </div>
+                        <div class="editor-field">
+                            @Html.TextBoxFor(model => model.FECHA_OC, "{0:dd-MM-yyyy}", new { @class = "form-control", Value = @ViewBag.FECHA_OC })
+                            @Html.ValidationMessageFor(model => model.FECHA_OC)
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="editor-label">
+                            <label for="ARCHIVO_OC">Orden de compra digital</label>
+                        </div>
+                        <div class="editor-field">
+                            <input type="file" class="file" title="Subir Documento" id="ARCHIVO_OC" name="ARCHIVO_OC" value="">
+                        </div>
+                    </div>
+                </div><!-- End panel-body -->
+            </section>
+        </div>
+
+        <div class="col-lg-4">
+            <section class="panel">
+                <header class="panel-heading">Datos factura</header>
+                <div class="panel-body">
+
+                    <div class="col-sm-12">
+                        <div class="editor-label">
+                            @Html.LabelFor(model => model.NUMERO)
+                        </div>
+
+                        <div class="editor-field">
+                            @Html.TextBoxFor(model => model.NUMERO, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.NUMERO)
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="editor-label">
+                            @Html.LabelFor(model => model.FECHA)
+                        </div>
+                        <div class="editor-field">
+                            @Html.TextBoxFor(model => model.FECHA, "{0:dd-MM-yyyy}", new { @class = "form-control ", Value = @ViewBag.FECHA })
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="editor-label">
+                            @Html.LabelFor(model => model.ARCHIVO)
+                        </div>
+                        <div class="editor-field">
+                            @Html.TextBoxFor(model => model.ARCHIVO, new { Type = "file", @class = "file", title = "Subir Documento" })
+                            @Html.ValidationMessageFor(model => model.ARCHIVO)
+                        </div>
+                    </div>
+
+                </div><!-- End panel-body -->
+            </section>
+        </div>
+
+        <div class="col-lg-4">
+            <section class="panel">
+                <header class="panel-heading">Datos proveedor</header>
+                <div class="panel-body">
+                    <div class="col-sm-9">
+                        <div class="editor-label">
+                            <label>RUT PROVEEDOR</label>
+                        </div>
+
+                        <div class="editor-field">
+                            @*@if (ViewBag.rutProveedor.Length > 1)
+                            {
+                                //Si tiene proveedor asociado
+                                @Html.TextBox("RUT_PROVEEDOR_", (String)ViewBag.rutProveedor, new { @class = "form-control" })
+                                @Html.HiddenFor(model => model.RUT_PROVEEDOR)
+                            }
+                            else
+                            {
+                                @Html.TextBox("RUT_PROVEEDOR_", "", new { @class = "form-control" })
+                                @Html.Hidden("RUT_PROVEEDOR")
+                            }*@
+
+                            @Html.TextBox("RUT_PROVEEDOR_", "", new { @class = "form-control", Value = @ViewBag.RUT_PROVEEDOR })
+                            @Html.Hidden("RUT_PROVEEDOR", new { Value = @ViewBag.RUT_PROVEEDOR })
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <div class="editor-label">
+                            &nbsp;
+                        </div>
+                        <div class="editor-field">
+                            <a href="javascript:void(0)" id="buscarRazonSocial" class="btn btn-info">Buscar</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="editor-label">&nbsp;</div>
+                        <div class="editor-field">
+                            <h4><div id="divRazonSocial">@ViewBag.razonSocial</div></h4>
+                            @Html.Hidden("razonSocial")
+                            @Html.Hidden("UTM")
+                        </div>
+                        <div class="editor-label">&nbsp;</div>
+                        <div class="editor-field">&nbsp;</div>
+                    </div><!-- End panel-body -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+
+                <section class="panel">
+                    <header class="panel-heading">
+                        <div class="">
+                            <div class="col-lg-10">
+                                <input type="text" id="codigo_barra" placeholder="CODIGO DE BARRAS" class="form-control ">
+                            </div>
+                            <div class="cols-lg-2">
+                                <span class=" ">
+                                    @*<button id="addProductoByCodigo" class="btn btn-info" type="button">+ Agregar</button>*@
+                                    <button id="nuevoProducto" class="btn btn-white" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Agregar nuevo producto"> <i class=" fa fa-plus"></i> NUEVO PRODUCTO</button>
+                                </span>
+                            </div>
+                        </div>
+                        <hr />
+                        <table class="col-lg-12">
+                            <thead>
+                                <tr>
+                                    <th class="col-lg-2">Cantidad</th>
+                                    <th class="col-lg-7">Producto</th>
+                                    <th class="col-lg-2">Total Neto</th>
+                                    <th class="col-lg-1"></th>
+                                </tr>
+                            <tbody>
+                                <tr>
+                                    <td class="col-sm-2"><input type="text" id="cantidad" value="1" class="form-control" /></td>
+                                    <td class="col-sm-7">@Html.DropDownList("PRODUCTOS", (IEnumerable<SelectListItem>)ViewBag.productos, new { @class = "select2" })</td>
+                                    <td class="col-sm-2"><input type="text" id="precio" value="1" class="form-control" /></td>
+                                    <td class="col-sm-1 text-right"><a href="javascript:void(0)" class="btn btn-info" id="addProducto">+ Agregar</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </header>
+                    <div class="panel-body">
+                        <fieldset>
+                            <table id="tablaProductos" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>NOMBRE</th>
+                                        <th>STOCK</th>
+                                        <th>CANTIDAD</th>
+                                        <th>PRECIO UNITARIO</th>
+                                        <th>TOTAL NETO</th>
+                                        <th>INVENTARIO</th>
+                                        <th>CODIGO BARRAS</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </fieldset>
+                    </div>
+                </section>
+            </div>
+    </div>
+    <div class="row">
+            <div class="col-lg-8"> 
+            </div>
+            <div class="col-lg-4">
+                <section class="panel">
+                    <table class="table">
+                        <tr>
+                            <td colspan="1" class="text-right no-border">
+                                <div class="editor-label">
+                                    @Html.LabelFor(model => model.NETO)
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(model => model.NETO, new { @class = "form-control", Value = 0})
+                                    @Html.ValidationMessageFor(model => model.NETO)
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="text-right no-border">
+                                <div class="editor-label">
+                                    <label>NETO FACTURA</label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    <input type="text" id="NETO_FACTURA" class="form-control" value="0" data-fv-callback="true" />
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    <a href="javascript:void(0)" class="btn btn-info btn-sm" id="btnCalcular" data-toggle="tooltip" data-placement="top" title="" data-original-title="Permite calcular diferencias entre la suma automatica y el neto de la factura">Calcular</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><label id="divDiferencia"></label></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="text-right no-border">
+                                <div class="editor-label">
+                                    @Html.LabelFor(model => model.DESCUENTO)
+                                </div>
+                            </td>
+                            <td>
+
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(model => model.DESCUENTO, new { @class = "form-control", Value = 0 })
+                                    @Html.ValidationMessageFor(model => model.DESCUENTO)
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="text-right no-border">
+                                <div class="editor-label">
+                                    @Html.LabelFor(model => model.SUBTOTAL)
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(model => model.SUBTOTAL, new { @class = "form-control", Value = 0 })
+                                    @Html.ValidationMessageFor(model => model.SUBTOTAL)
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="text-right no-border">
+                                <div class="editor-label">
+                                    @Html.LabelFor(model => model.IVA)
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(model => model.IVA, new { @class = "form-control", Value = 0 })
+                                    @Html.ValidationMessageFor(model => model.IVA)
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="1" class="text-right no-border">
+                                <div class="editor-label">
+                                    @Html.LabelFor(model => model.TOTAL)
+                                </div>
+                            </td>
+                            <td>
+
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(model => model.TOTAL, new { @class = "form-control", Value = 0 })
+                                    @Html.ValidationMessageFor(model => model.TOTAL)
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="text-center">
+                                    @*@Html.ActionLink("Cancelar", "Cancelar", new { id = Model.ID_FACTURA }, new { @class = "btn btn-white" })*@
+                                    @Html.ActionLink("Cancelar", "Index", "Factura", new { @class="btn btn-white" })
+                                </div>
+                            </td>
+                            <td>
+                                <input type="submit" value="Guardar" class="btn btn-info" />
+                                <button id="ajustar" type="button" class="btn btn-gplus" data-toggle="tooltip" data-placement="top" title="" data-original-title="Presione para ajustar los valores">Ajustar</button>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </section>
+            </div>
+
+    </div><!-- End row -->
+
+} <!-- end form -->
+<br />
+
+<div id="codigoBarrasNoEncontradoModal" class="modal fade">
+    <div class="m-b-none">
+        <div class="modal-dialog  modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+                    </div>
+                <div class="modal-body">
+                    <!-- content --> 
+                        <div class="row form-group">
+                            <div class="panel-body text-center">
+                                <fieldset> 
+                                    <div class="alert alert-danger">
+                                         <i class="fa fa-ban-circle fa-lg"></i><b>Producto no encontrado.</b>
+                                    </div> 
+                                </fieldset>
+                            </div>
+                        </div><!-- /row --> 
+                    <!-- /content -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">OK</button>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contenido" class="modal-body"></div>
+<div id="NuevoProductoModal" class="modal-body"></div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalConfirmation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Advertencia</h4>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de eliminar el ingreso?
+            </div>
+            <div class="modal-footer">
+ 
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    <button id="submit_yes" type="button" class="btn btn-info">Si</button> 
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <!-- SELECT 2--> 
+    <script src="~/Content/Themes/Sistemas/js/select2/select2.min.js"></script>
+    <link rel="stylesheet" href="~/Content/Themes/Sistemas/js/select2/select2.css" /> 
+    <!-- LECTOR CODIGO DE BARRAS -->
+    <script src="~/Content/Themes/Sistemas/js/barcode/jquery.scannerdetection.js"></script>
+    <!--[if IE 8]>
+    <script src="~/Content/Themes/Sistemas/js/barcode/jquery.scannerdetection.compatibility.js"></script>
+    <![endif]-->
+    <!-- DATEPICKER-->
+    <script src="~/Content/Themes/Sistemas/js/datepicker/bootstrap-datepicker.js"></script>
+    <!-- X-EDITABLE-->
+    @*<link rel="stylesheet" href="~/Content/Themes/Sistemas/js/xeditable/css/bootstrap-editable.css" />
+    <script src="~/Content/Themes/Sistemas/js/xeditable/js/bootstrap-editable.min.js"></script>*@
+
+    <!-- Validacion Rut -->
+    <script src="~/Content/Themes/Sistemas/js/rut/jquery.Rut.js"></script>
+    <!-- input file -->
+    <script src="~/Content/Themes/Sistemas/js/file-input/bootstrap.file-input.js"></script>
+    <!-- Ventana modal Loading -->
+    <script src="~/Content/themes/Sistemas/js/loadingModal/bootstrap-waitingfor.js"></script> 
+    <script>
+
+    function OnSuccessSolicitud(val) {
+         
+        if (val == 1) {
+            alert("Solicitud realizada con exito.");
+            $('#modalSolicitud').modal('hide')
+        }
+    }
+         
+
+    $(document).on("keyup", "#precio, .totalFP", function () {
+        //console.log("keyup"); 
+        this.value = this.value.replace(".", ",");
+    });
+         
+    //ventana modal ingreso producto
+    function OnSuccess(val) {
+
+        if (val == 1) {
+            alert("Se ha guardado el producto.");
+           //obtener los productos
+            $.ajax({
+                type: "GET",
+                cache: false,
+                url: "@Url.Action("GetAllProducts", "Producto")",
+                success: function (response) {
+
+                    //response = [{"pid":1,"pname":"TRADICIONAL"},{"pid":2,"pname":"DIGITAL"},...]
+                    //var contact = new Object(); 
+                    //contact.text = "Aaberg";
+                    //contact.children = response;
+
+                    //var memberfilter = new Array();
+                    //memberfilter[0] = "text";
+                    //memberfilter[1] = "children";
+
+                    //var jsonText = JSON.stringify(contact, memberfilter, "\t");
+                    //console.log(jsonText);
+                    //{ "surname": "Aaberg", "phone": [ "555-0100", "555-0120" ] }
+
+                    //console.log(response);
+
+                    var obj = $.parseJSON(response);
+                    
+                    $.each(obj, function (key, value) {
+                        //console.log(value.pid + ":" + value.pname);
+                        //quitar select2
+                        //$("#PRODUCTOS").select2('data', null, false);
+                        //console.log(value.pname);
+                        //console.log(value.pid); 
+                        //var o = new Option(value.pname, value.pid);
+                        var o = new Option(value.pname, value.pid);
+                        //console.log(o); 
+                        $(o).html(value.DESC_LINEA_INVERSION);
+                        $("#PRODUCTOS").append(o);
+
+                        //aplicar select 2
+                        //$("#PRODUCTOS").select2({ width: '100%' });
+
+                    });
+                     
+                }
+            });
+
+            $("#NOMBRE").val("");
+        }
+        else {
+            alert("Error, intente de nuevo.");
+        }
+    }
+
+    function OnFailure(val) {
+
+        if (val == 0) {
+            alert("Error, intente de nuevo.");
+        }
+    }
+
+    $(document).ready(function () {
+
+        //$("#lineas").select2({ width: '90%' });
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("#anio").change(function () {
+            //console.log($(this).val());
+            waitingDialog.show("");
+            $("#ID_LINEA_INVERSION").html('');
+            $.ajax({
+                type: "GET",
+                cache: false,
+                url: "@Url.Action("getLineasDeInversion", "Factura")",
+                data: { acno: $(this).val() },
+                success: function (response) {
+                //console.log(response);
+                var obj = $.parseJSON(response);
+                //console.log(obj);
+                if (obj.key != null) {
+                    $.each(obj, function (key, value) {
+                        //console.log(value.pid + ":" + value.pname);
+                        var o = new Option(value.pname, value.pid);
+                        $(o).html(value.pname);
+                        $("#ID_LINEA_INVERSION").append(o);
+                        //console.log(true);
+                    });
+                }
+
+                waitingDialog.hide();  
+            }
+        });
+
+        });
+
+
+        //array de ID de productos ingresados
+        var ingresados = [];
+
+        $('#cantidad, #precio').bind('keypress', function (e) {
+            return (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 46) ? false : true;
+        });
+        
+        $(document).on("click", "#submit_yes", function (e) {
+            $("form").submit(function (event) {
+
+                if ($("input:first").val() === "correct") {
+                    $("span").text("Validated...").show();
+                    return;
+                }
+            });
+
+        });
+
+        $("#nuevoProducto").click(function () {
+            waitingDialog.show("");
+            $.ajax({
+                type: "GET",
+                async: true,
+                url: "@Url.Action("CreateAjax", "Producto")",
+                success: function (data) {
+                    waitingDialog.hide();
+                    $("#NuevoProductoModal").html(data);
+                    $("#createModal").modal({ show: true });
+                }
+            });
+        });
+
+        /* Validacion del rut */
+        $("#RUT_PROVEEDOR_").Rut({
+            on_error: function () { alert('El rut ingresado es incorrecto'); },
+            format_on: 'keyup'
+        });
+
+        /* Validacion campos de formulario */
+        $(".registrarIngreso").bootstrapValidator({
+           // message: 'no valido',
+            submitHandler: function (validator, form, submitButton) {
+                //console.log(form);
+            },
+            fields: {
+                CODIGO_OC: {
+                    message: 'Requerido',
+                    validators: {
+                        notEmpty: {
+                            message: 'Ingrese numero de orden'
+                        },
+                        stringLength: {
+                            max: 30,
+                            message: 'Solo puede ingresar 30 caracteres'
+                        },
+                    }
+
+                },
+                RUT_PROVEEDOR_: {
+                    message: 'Requerido',
+                    validators: {
+                        notEmpty: {
+                            message: 'Ingrese rut del proveedor'
+                        },
+                    }
+                },
+                NUMERO: {
+                    message: 'Requerido',
+                    validators: {
+                        notEmpty: {
+                            message: 'Ingrese numero de la factura'
+                        },
+                        stringLength: {
+                            max: 12,
+                            message: 'Solo puede ingresar 12 caracteres'
+                        },
+                    }
+                },
+                FECHA: {
+                    message: 'Requerido',
+                    validators: {
+                        notEmpty: {
+                            message: 'Ingrese fecha de la factura'
+                        },
+                        stringLength: {
+                            max: 12,
+                            message: 'Solo puede ingresar 12 caracteres'
+                        },
+                    }
+                },
+                FECHA_OC: {
+                    message: 'Requerido',
+                    validators: {
+                        notEmpty: {
+                            message: 'Ingrese fecha de orden'
+                        },
+                        stringLength: {
+                            max: 12,
+                            message: 'Solo puede ingresar 12 caracteres'
+                        },
+                    }
+                },
+                TOTAL: {
+                    message: 'Requerido',
+                    validators: {
+                        notEmpty: {
+                            message: 'Ingrese monto de la factura'
+                        },
+                    }
+                },
+            }
+
+        });
+
+
+    $("#PRODUCTOS").select2({ width: '100%' });
+
+    $("#ID_LINEA_INVERSION").select2({ width: '100%', allowClear: true });
+    var nombreProd = $("#PRODUCTOS").select2("data");
+
+    //buscar producto mediante ingreso manual del codigo de barras
+    $("#addProductoByCodigo").click(function () {
+
+        var codigoBarras = jQuery("#codigo_barra").val();
+
+        if (codigoBarras == null) {
+            alert("Ingrese codigo de barras");
+            jQuery("#codigo_barra").focus();
+            return;
+        }
+        //llamar a funcion que busca el producto en base al codigo de barras
+        var numeroFilas = jQuery("#tablaProductos > tbody > tr").length;
+        //console.debug(numeroFilas);
+        //mostrar loading
+        waitingDialog.show("");
+        //obtener los datos desde consulta ajax
+        $.get("@Url.Action("BuscarProductoByCodigoBarra", "Factura")/" + codigoBarras + "/" + numeroFilas, function (data) {
+            if (data == '0') {
+                waitingDialog.hide();
+                $("#codigoBarrasNoEncontradoModal").modal({ show: true })
+                //alert("El producto no está registrado.");
+            }
+            else {
+                jQuery("#tablaProductos > tbody").after(data);
+                jQuery("#codigo_barra").val("");
+                //quitar loading
+                waitingDialog.hide();
+            }
+
+        });
+
+    });
+
+    /*buscar el producto mediante el teclado*/
+    $("#addProducto").click(function () {
+
+        if ($("#FECHA_OC").val().length == 0) {
+
+            alert("Ingrese fecha de orden de compra");
+            $("#FECHA_OC").focus();
+            return;
+        }
+
+        if ($("#FECHA").val().length == 0) {
+
+            alert("Ingrese fecha de la factura");
+            $("#FECHA").focus();
+            return;
+        }
+
+        var numeroFilas = $("#tablaProductos > .fila_producto").length;
+        var cantidad = $("#cantidad").val();
+        var precio = $("#precio").val().replace(".", ",");
+
+        //console.log(precio);
+
+        //obtener dia, mes y año en un array
+        var fecha_array = $("#FECHA").val().split("-");
+
+        //console.log("dia: " + fecha_array[0]);
+        //console.log("mes: " + fecha_array[1]);
+        //console.log("año: " + fecha_array[2]);
+
+        /* Obtener la UTM de un mes especifico */
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getUtmByFecha", "Factura")',
+            data: { mes: fecha_array[1], anio: fecha_array[2] },
+            success: function (data) {
+                //debugger
+                //console.debug("DATA: " + data);
+                //console.log(data);
+                $("#UTM").val(data);
+            },
+            complete: function () {
+
+            }
+        });
+
+        var utm = $("#UTM").val();
+
+        //alert(utm_mes);
+        //console.debug(numeroFilas);
+
+        //validar que existan valores en cantidad y precio
+        if (cantidad.length == 0 || cantidad == 0) {
+            alert("Ingrese cantidad");
+            jQuery("#cantidad").focus();
+            return;
+        }
+
+        if (precio.length == 0 || precio == 0) {
+            alert("Ingrese precio");
+            jQuery("#precio").focus();
+            return;
+        }
+
+        var nombreProd = jQuery("#PRODUCTOS").select2("data");
+
+        //ingresar el id del producto al array si no esta repetido
+        //if (ingresados.indexOf(nombreProd["id"]) == -1) {
+        if( $.inArray(nombreProd["id"], ingresados) == -1){
+            ingresados.push(nombreProd["id"]);
+        }
+        else {
+            //no ingresar el producto a la solicitud
+            alert("Usted ya ha agregado el producto.");
+            return;
+        }
+        //mostrar loading
+        waitingDialog.show("");
+        //precio =  TOTAL_LINEA
+
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("NuevoProductoItem", "Factura")",
+            // contentType: "application/json",
+            data: { id: nombreProd["id"], fila: numeroFilas, cantidad: cantidad, total: precio, UTM: utm },
+            success: function (data) {
+
+                //Insertar la nueva fila con los textbox
+                jQuery("#tablaProductos > thead").after(data);
+                //jQuery("#nombre_producto").html(nombreProd["text"]);
+                //console.log("precio:" + precio.replace(",", "."));//reemplazar , por . para convertirlo en float
+                
+                //console.log("neto solo:"+$("#NETO").val());
+                //console.log("neto solo:" + $("#NETO").val().replace(",", "."));
+                //sumar lo que esta en NETO
+                var total_neto = parseFloat($("#NETO").val().replace(",", ".")) + parseFloat(precio.replace(",", "."));//reemplazar , por . para convertirlo en float
+                //var total_neto = parseFloat($("#NETO").val()) + parseFloat(precio.replace(",", "."));
+
+                //console.log("total neto: " + total_neto);
+
+
+                $("#NETO").val(total_neto.toFixed(2).replace(".", ","));
+
+                var subtotal = parseFloat($("#NETO").val().replace(",", ".")) - parseFloat($("#DESCUENTO").val().replace(",", "."));
+
+                //console.log("subtotal:"+subtotal);
+
+                $("#SUBTOTAL").val(subtotal.toFixed(2).replace(".", ","));
+
+                //recalcular iva y total
+                var total = (subtotal * 1.19);
+                $("#TOTAL").val(total.toFixed(2).replace(".", ","));
+
+                var iva = total - total_neto;
+                $("#IVA").val(iva.toFixed(2).replace(".", ","));
+
+                //console.debug(iva);
+                //poner el foco en cantidad y quitar su numero
+                $("#cantidad").focus(0, function () {
+                    $(this).val("");
+                    $("#precio").val("");
+                });
+
+                //quitar loading
+                waitingDialog.hide();
+            }
+        });
+
+    });//fin add producto
+
+    //buscar el producto mediante el codigo de barras
+    $("#codigo_barra").scannerDetection(function (e) {
+        //alert(e);
+        var numeroFilas = $("#tablaProductos > tbody > tr").length;
+        //console.debug(numeroFilas);
+        //mostrar loading
+        waitingDialog.show("");
+
+        //obtener los datos desde consulta ajax get
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("BuscarProductoByCodigoBarra", "Factura")",
+            data: { id: e, fila: numeroFilas },
+            success: function (data) {
+                //debugger
+                //console.log(data);
+                if (data == '0') {
+                    waitingDialog.hide();
+                    $("#codigoBarrasNoEncontradoModal").modal({ show: true })
+                    //alert("El producto no está registrado.");
+                }
+                else {
+                    jQuery("#tablaProductos > thead").after(data);
+                    //$("#tablaProductos > tbody").after(data);
+                    $("#nombre_producto").html(data.NOMBRE);
+                    $("#codigo_barra").val("");
+                    //quitar loading
+                    waitingDialog.hide();
+                }
+            }
+        });
+
+    });
+
+    $('#FECHA_OC, #FECHA').datepicker({
+        format: 'dd-mm-yyyy',
+        language: "Es",
+    });
+
+    $(document).on("keypress", ".totalFP", function (e) {
+        return (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 46 && e.which != 188) ? false : true;
+    });
+    $(document).on("keypress", "#VIDA_UTIL, #STOCK_MINIMO", function (e) {
+        return (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) ? false : true;
+    });
+
+    /**
+     *Listar razones sociales del proveedor en una modal
+     *
+    */
+    $(document).on("click", "#razonSocialLink", function () {
+
+        var rutProveedor = $("#RUT_PROVEEDOR").val();
+        waitingDialog.show("");
+ 
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getRazonSocialList", "Factura")',
+            data: { rutProveedor: rutProveedor },
+            success: function (data) {
+                $("#contenido").html(data);
+                waitingDialog.hide();
+                //ventana modal
+                $("#razonSocialListModal").modal({ show: true })
+            }
+        });
+
+    });
+
+    /**
+     * buscar datos del proveedor
+     */
+    $("#buscarRazonSocial").click(function () {
+
+        var rutProveedor = jQuery("#RUT_PROVEEDOR_");
+        var razonSocial = jQuery("#razonSocial");
+        var lablRazonSocial = jQuery("#divRazonSocial");
+
+        //obtener sólo los primeros 8 numeros de rut
+        jQuery("#RUT_PROVEEDOR").val(rutProveedor.val().replace(/\./g, '').replace(/-/, ''));
+        //console.debug(jQuery("#RUT_PROVEEDOR").val());
+
+        //validar formato 10.000.000-1 o 10111222-1
+        if (rutProveedor.val().length > 9) {
+            lablRazonSocial.css("display", "none");
+            //mostrar imagen loading
+            waitingDialog.show("");
+            // jQuery("#loading").css("display", "inline-block");
+
+            jQuery.ajax({
+                type: 'POST',
+                url: '@Url.Action("getProveedorData", "Factura")',
+                data: { rut: rutProveedor.val() },
+                success: function (data) {
+                    //debugger
+                    //console.log(data);
+                    //alert(data);
+                    //var returnJson = data;
+                    //ocultar imagen loading
+                    waitingDialog.hide();
+                    //jQuery("#loading").css("display", "none");
+
+                    razonSocial.val(data);
+
+                    lablRazonSocial.css("display", "inline-block").html(data);
+                },
+                complete: function () {
+
+                }
+
+            });
+        }
+        else alert("Ingrese rut del proveedor");
+    });
+
+    /**
+     * Contar la cantidad de lineas de productos para recorrer y
+     * obtener el total de la factura
+     */
+
+    function cantidadLineaProductos() {
+        var numeroFilas = jQuery("#tablaProductos > .fila_producto").length;
+        return numeroFilas;
+    }
+
+    /* Estilo campos file */
+    //jQuery("#ARCHIVO, #ARCHIVO_OC").fileinput({
+    //    maxFileCount: 10,
+    //    mainClass: "input-group-lg",
+    //    uploadLabel: "Upload"
+    //});
+
+    //prevenir el post al presionar enter dentro de un input
+    //$(":input").on("keypress", function (e) {
+    //    console.debug(e)
+    //    return e.keyCode != 13;
+    //    if (e.which == 13 || e.keyCode == 13) {
+    //        e.preventDefault();
+    //        e.stopPropagation();
+    //    }
+    //});
+
+    $(document).on("click", "[name='eliminar']", function () {
+        //remover la fila
+        $(this).parent().parent().remove();
+
+        ingresados.splice($.inArray(this.id, ingresados), 1);
+
+        //representa el valor del input con nombre [].TOTAL_FP de la fila borrada
+        //var total_linea = $(this).parent().parent().find(".totalFP").val();
+
+        var total_linea = $(this).parent().parent().find(".totalFP").val().replace(",",".");
+        //console.debug("Total Linea actual: " + total_linea);
+
+        var neto = parseFloat($("#NETO").val().replace(",", ".")) - parseFloat(total_linea);
+        //console.debug("Neto - Total linea: " + neto);
+
+        //si se quitaron todos los productos
+        if (neto == 0) {
+            $("#NETO").val("0,00");
+        }
+        else {
+            $("#NETO").val(neto.toFixed(2).replace(".", ","));
+        }
+
+        //obtener el total y el iva en base al subtotal
+        //Actualizar subtotal
+        $("#SUBTOTAL").val(neto.toFixed(2).replace(".", ","));
+
+        var total = parseFloat($("#SUBTOTAL").val().replace(",", ".")) * 1.19;
+
+        //console.log("NETO: " + parseFloat($("#NETO").val().replace(".", ",")));
+        //console.log("TOTAL: " +  parseFloat(total));
+
+        $("#TOTAL").val(total.toFixed(2).replace(".", ","));
+
+        //obtener el iva
+        var iva = total - neto;
+        //console.log("IVA: " + iva);
+        $("#IVA").val(iva.toFixed(2).replace(".", ","));
+
+
+    });
+
+    $("#btnCalcular").click(function () {
+        //calcular la diferencia entre el neto sumado y el de la factura
+        //console.log($("#NETO").val());
+
+        var neto = parseFloat($("#NETO").val());
+        //console.log(neto);
+
+        var diferencia = parseFloat($("#NETO_FACTURA").val()) - neto;
+
+        //si es mayor a 0, sume a los totales
+        //si es menor a 0, reste a los totatales
+        //correcto
+
+        if (diferencia > 0) {
+
+            //var resultado = "<label>" + diferencia + "</label>. Sume a los totales.";
+            var resultado = "Sume $" + diferencia + " a los totales.";
+        }
+        else if (diferencia < 0) {
+            //var resultado = "<label>" + diferencia + "</label>. Reste a los totales.";
+            var resultado = "Reste $" + Math.abs(diferencia) + " a los totales.";
+        }
+        else if (diferencia == 0) {
+            //var resultado = "<label>" + diferencia + "</label>.";
+            var resultado = "$" + diferencia + " Ok.";
+        }
+
+        $("#divDiferencia").text(resultado);
+
+    });
+
+    /*hacer cambios en NETO cuando se detecte un cambio en un textbox con la clase total_fp*/
+    $(document).on("focus", ".totalFP", function () {
+        //guardamos el valor anterior en un atributo ficticio
+        $(this).attr('oldValue', $(this).val().replace(",", "."));
+       // $(this).attr('oldValue', $(this).val());
+
+    });
+
+    $(document).on("change", ".totalFP", function () {
+        //obtener el neto
+        var neto = parseFloat($("#NETO").val().replace(",", "."));
+        //var neto = parseFloat($("#NETO").val());
+        //console.log("NETO:" + neto);
+        //cambiar el . por la coma
+
+        var total_previus = parseFloat($(this).attr('oldValue'));
+        var total_actual = parseFloat($(this).val().replace(",","."));
+       // var total_actual = parseFloat($(this).val());
+
+        //console.log("total anterior:"+total_previus);
+        //console.log("total actual:"+total_actual);
+
+        var resta_totales = (total_actual - total_previus);
+        //console.log(resta_totales);
+        var neto_final = neto + resta_totales;
+
+        //console.log("neto final "+ neto_final);
+        $("#NETO").val(neto_final.toFixed(2).replace(".", ","));
+        //$("#NETO").val(neto_final);
+        //actualizar el neto
+    });
+
+    //$(document).on("change", ".invenCheck", function () {
+
+    //    //console.log("chekeo activo fijo");
+    //    if ($(this).is(':checked')) {
+    //        //console.log("activo fijo activado");
+    //        //si esta checkeado deshabilitar el otro check con clase = InvenCheck
+    //        $(this).parent().parent().find(".adminCheck").prop("checked", false);
+    //    }
+    //    else {
+    //        //console.log($(this).is(':checked'));
+    //        //$(this).parent().parent().find(".adminCheck").prop("checked", true); //si saco el check, para inventario administrativo
+    //    }
+
+    //});
+
+    //$(document).on("change", ".adminCheck", function () {
+
+    //    //console.log("chekeo admin");
+
+    //    //si esta checkeado deshabilitar el otro check con clase = InvenCheck
+    //    if ($(this).is(':checked')) {
+    //        //console.log("inventario admin activado");
+    //        $(this).parent().parent().find(".invenCheck").prop("checked", false);
+    //        //    //si esta checkeado deshabilitar el otro check con clase = InvenCheck
+    //        //    $(this).parent().parent().find(".invenCheck").attr("checked", true);
+    //        //    console.log("invenCheck disabled?");
+    //    }
+    //    else {
+    //        //$(this).is(':checked');
+    //        //$(this).parent().parent().find(".invenCheck").prop("checked", true); //si saco el check, para inventario administrativo
+    //    }
+
+
+    //});
+
+    /*Calcular subtota, iva y total cuando se ingrese el descuento*/
+    $("#DESCUENTO").change(function () {
+
+        if ($("#DESCUENTO").val() < 1) {
+
+            var descuento = 0;
+            $("#DESCUENTO").val("0");
+        }
+        else {
+            var descuento = parseFloat($("#DESCUENTO").val().replace(",", "."));
+
+        }
+
+        //calcular subtotal
+        var subtotal = parseFloat($("#NETO").val().replace(",", ".")) - descuento;
+        //console.log(subtotal);
+        $("#SUBTOTAL").val(subtotal.toFixed(2).replace(".", ","));
+
+        //calcular iva
+        var iva = ((subtotal * 1.19) - subtotal);
+        //console.log(iva);
+        $("#IVA").val(iva.toFixed(2).replace(".", ","));
+
+        //calcular total
+        var total = (subtotal * 1.19).toFixed(2).replace(".", ",");
+        //console.log(total);
+        $("#TOTAL").val(total);
+    });
+
+    /*Al cambiar el neto, calcular el iva, subtotal y el total*/
+    //$("#NETO").change(function () {
+    //    alert("cambio neto");
+    //    //calcular subtotal
+    //    var subtotal = parseFloat($("#NETO").val().replace(",", ".")) - parseFloat($("#DESCUENTO").val().replace(",", "."));
+    //    console.log(subtotal);
+    //    $("#SUBTOTAL").val(subtotal.toFixed(2).replace(".", ","));
+
+    //    //calcular iva
+    //    var iva = ((subtotal * 1.19) - subtotal);
+    //    console.log(iva);
+    //    $("#IVA").val(iva.toFixed(2).replace(".", ","));
+
+    //    //calcular total
+    //    var total = (subtotal * 1.19).toFixed(2).replace(".", ",");
+    //    console.log(total);
+    //    $("#TOTAL").val(total);
+    //});
+
+    /*Ajustar los valores*/
+    $("#ajustar").click(function () {
+
+        if ($("#DESCUENTO").val() < 1) {
+
+            var descuento = 0;
+            $("#DESCUENTO").val("0");
+        }
+        else {
+            var descuento = parseFloat($("#DESCUENTO").val().replace(",", "."));
+
+        }
+        
+        //obtener el subtotal
+        var subtotal = parseFloat($("#NETO").val().replace(",", ".")) - descuento;
+        $("#SUBTOTAL").val(subtotal.toFixed(2).replace(".", ","));
+
+        //obtener iva
+        var iva = (subtotal * 1.19) - subtotal;
+        $("#IVA").val(iva.toFixed(2).replace(".", ","));
+
+        //obtener el total
+        $("#TOTAL").val((subtotal * 1.19).toFixed(2).replace(".", ","));
+
+    });
+
+    /* **************************** **/
+    /* Ingreso de productos ajax    **/
+    /* **************************** **/
+
+    $("#loading").css("display", "none");
+    //obtener subgrupos
+    $(document).on("change", "#ID_GRUPO", function () {
+        $("#ID_SUBGRUPO").disabled = false;
+        $("#loading").css("display", "inline-block");
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ListarSubGrupos", "Producto")',
+            data: { id: $(this).val() },
+            success: function (data) {
+                $("#subGrupo").html(data);
+                //quitar loading
+                $("#loading").css("display", "none");
+
+            }
+        });
+
+    });
+
+    //obtener los grupos
+    $(document).on("change", "#ID_RUBRO", function () {
+        //console.log("rubro");
+        $("#ID_SUBGRUPO").html("").attr("disabled", "disabled");// o this.disabled = true
+        $("#loading").css("display", "inline-block");
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ListarGrupos", "Producto")',
+            data: { id_rubro: $(this).val() },
+            success: function (data) {
+                $("#Grupo").html(data);
+                $("#loading").css("display", "none");
+            }
+        });
+
+    });
+ 
+    //valida y alerta si un codigo OC esta repetido
+    $("#CODIGO_OC").focusout(function () {
+        
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ExisteOrdenCompra", "Factura")',
+            data: { oc: $(this).val() },
+            success: function (data) {
+
+                if (data == '1') {
+                    alert("Aviso: Orden de compra ya existe.");
+
+                    $("#CODIGO_OC").css("border-color", "#ff6666");
+                }
+                else {
+                    $("#CODIGO_OC").css("border-color", "#ccc");
+                }
+            }
+        });
+
+    });
+
+    /* Validacion campos de formulario */
+    $(".registrarProducto").bootstrapValidator({
+        message: 'no valido',
+        fields: {
+            ID_SUBGRUPO: {
+                message: 'Selecione subgrupo',
+            },
+            ID_GRUPO: {
+                message: 'Seleccione grupo',
+                validators: {
+                    notEmpty: {
+                        message: 'Selecione grupo'
+                    }
+                }
+
+            },
+            ID_RUBRO: {
+                message: 'Seleccione rubro',
+                validators: {
+                    notEmpty: {
+                        message: 'Selecione rubro'
+                    }
+                }
+
+            },
+        }
+    });
+
+
+    /*Impedir POST al clickear enter*/
+    $(window).keydown(function (event) {
+        if ((event.keyCode == 13)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+
+});
+
+    </script>
+}
